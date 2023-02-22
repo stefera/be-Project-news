@@ -1,5 +1,5 @@
 const express = require("express");
-const { getTopics } = require("./CONTROLLER");
+const { getTopics, getArticles, getArticleById } = require("./CONTROLLER");
 const badPathHandler = require("./CONTROLLER errors");
 // const { handle500, handleCustomErrors } = require("./CONTROLLER errors");
 const app = express();
@@ -7,9 +7,15 @@ const app = express();
 app.use(express.json());
 
 app.get("/api/topics", getTopics);
-app.all("*", badPathHandler);
+app.get("/api/articles", getArticles);
 
-// app.use(handle500);
+app.get("/api/articles/:articleId", getArticleById);
+
+app.use(handle400);
+app.use(handle404);
+
+// app.all("*", badPathHandler);
+
 // app.use(handleCustomErrors);
 
 module.exports = { app };

@@ -1,12 +1,14 @@
-const { fetchTopics } = require("./MODELS");
+const articles = require("./db/data/test-data/articles");
+const {
+  fetchTopics,
+  fetchCommentCount,
+  fetchSortedArticles,
+  fetchArticleById,
+} = require("./MODELS");
 
-// console.log("arrived in controller");
 const getTopics = (request, response, next) => {
-  //   console.log("arrived in controller  function");
-
   fetchTopics()
     .then((result) => {
-      //   console.log("controller result", result);
       response.status(200).send(result);
     })
     .catch((err) => {
@@ -14,4 +16,35 @@ const getTopics = (request, response, next) => {
     });
 };
 
-module.exports = { getTopics };
+const getArticles = (request, response, next) => {
+  fetchSortedArticles()
+    // .then((articlesWithCommCount) => {
+    //   // console.log("articlesWithCount", articlesWithCommCount);
+
+    // })
+    .then((finalResult) => {
+      // console.log("finalResult", finalResult);
+      response.status(200).send({ articles: finalResult });
+    })
+    .catch((err) => {
+      // console.log(err);
+      next(err);
+    });
+};
+
+const getArticleById = (request, response, next) => {
+  console.log(request.params);
+  const { articleId } = request.params;
+  // console.log("articleIDdestructured", articleId);
+  fetchArticleById(articleId)
+    .then((selectedArticle) => {
+      // console.log("arrived in response", { article: selectedArticle });
+      response.status(200).send({ article: selectedArticle });
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
+};
+
+module.exports = { getTopics, getArticles, getArticleById };
