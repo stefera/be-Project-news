@@ -139,4 +139,59 @@ describe("task4- GET api/articles", () => {
         expect(result.body.msg).toBe("Invalid path name, try again");
       });
   });
+  
+  
+  describe.only("task5- GET api/articles/:articleiD", () => {
+  test("returns a single object (with correct properties article) when id exists", () => {
+    return request(app)
+      .get("/api/articles/3")
+      .expect(200)
+      .then(({ body }) => {
+        // console.log("in test", body.article);
+        const article = body.article;
+        expect(article).toMatchObject({
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          article_img_url: expect.any(String),
+        });
+
+        expect(typeof article).toBe("object");
+        expect(Array.isArray(article)).toBe(false);
+        expect(article.article_id).toBe(3);
+      });
+
+
+  test("returns the correct article object when id exists", () => {
+    return request(app)
+      .get("/api/articles/6")
+      .expect(200)
+      .then(({ body }) => {
+        const article = body.article;
+
+        expect(article.article_id).toBe(6);
+      });
+  });
+  test("responds with approperitate error (404 Not found) when no article with given ID exists", () => {
+    return request(app)
+      .get("/api/articles/698")
+      .expect(404)
+      .then((result) => {
+        // console.log("error result body", result.body);
+        expect(result.status).toBe(404);
+        expect(result.body.msg).toBe("Item not found, try again");
+      });
+  });
+
+  test("responds with approperitate error (400- bad request) when given an invalid articleID type", () => {
+    return request(app)
+      .get("/api/articles/69w8")
+      .expect(400)
+      .then((result) => {
+        // console.log("error result body", result.body);
+        expect(result.status).toBe(400);
+        expect(result.body.message).toBe("Invalid request, try again");
 });
+  });
