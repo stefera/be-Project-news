@@ -60,7 +60,7 @@ const postCommentByArticle = (request, response, next) => {
       response.status(201).send({ postedComment: comment });
     })
     .catch((err) => {
-      // console.log(err);
+      console.log("error in controller", err);
       next(err);
     });
 };

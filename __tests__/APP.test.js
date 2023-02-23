@@ -269,9 +269,9 @@ describe("task7- POST /api/articles/:article_id/comments", () => {
           body: expect.any(String),
           votes: expect.any(Number),
           author: expect.any(String),
-          article_id: expect.any(Number),
           created_at: expect.any(String),
         });
+        expect(postedComment.article_id).toBe(3);
         expect(typeof postedComment).toBe("object");
         expect(Array.isArray(postedComment)).toBe(false);
       });
@@ -298,6 +298,30 @@ describe("task7- POST /api/articles/:article_id/comments", () => {
       .then((result) => {
         expect(result.status).toBe(400);
         expect(result.body.msg).toBe("Invalid comment provided, try again");
+      });
+  });
+
+  test("returns a 400 error if an invalid article ID is given", () => {
+    // const newCommentData = {};
+    return request(app)
+      .post("/api/articles/31312w/comments")
+      .send()
+      .expect(400)
+      .then((result) => {
+        expect(result.status).toBe(400);
+        expect(result.body.msg).toBe("Invalid request, try again");
+      });
+  });
+
+  test.skip("returns a 404 error if article given is not found", () => {
+    const newCommentData = { body: "asdfgh", username: "true" };
+    return request(app)
+      .post("/api/articles/299999/comments")
+      .send(newCommentData)
+      .expect(404)
+      .then((result) => {
+        expect(result.status).toBe(404);
+        expect(result.body.msg).toBe("Invalid not found, try again");
       });
   });
 });

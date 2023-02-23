@@ -74,13 +74,13 @@ const postAndReturnComment = (comment, article_id) => {
     .query(
       `
      INSERT INTO comments
-     (body, votes, author, article_id, created_at)
+     (body, author, article_id)
      VALUES(
-      $1,$2,$3,$4,$5
+      $1,$2,$3
      )
      RETURNING *;
     `,
-      [body, 0, username, article_id, new Date()]
+      [body, username, article_id]
     )
     .then(({ rows }) => {
       if (!rows[0]) {
