@@ -25,7 +25,6 @@ describe("task3- GET api/topics", () => {
       .get("/api/topics")
       .expect(200)
       .then(({ body }) => {
-        // console.log(body);
         const originalData = topicData;
         expect(body).not.toBe(originalData);
         expect(originalData).not.toBe(body);
@@ -55,7 +54,6 @@ describe("task3- GET api/topics", () => {
       .get("/api/nottopics")
       .expect(404)
       .then((result) => {
-        console.log("error result body", result.body);
         expect(result.status).toBe(404);
         expect(result.body.msg).toBe("Invalid path name, try again");
       });
@@ -68,7 +66,6 @@ describe("task4- GET api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        // console.log(body);
         const originalData = articleData;
         expect(body.articles).not.toBe(originalData);
         expect(Array.isArray(body.articles)).toBe(true);
@@ -79,7 +76,6 @@ describe("task4- GET api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        console.log("test1 result and body", body.articles);
         const originalData = articleData;
 
         body.articles.forEach((item) => {
@@ -90,10 +86,10 @@ describe("task4- GET api/articles", () => {
             created_at: expect.any(String),
             votes: expect.any(Number),
             article_img_url: expect.any(String),
+            votes: expect.any(Number),
           });
           expect(body.articles.length).toBe(12);
         });
-        // expect(body).toEqual(originalData);
       });
   });
 
@@ -116,14 +112,10 @@ describe("task4- GET api/articles", () => {
           actualCount = commentData.filter((comment) => {
             return comment.article_id === article.article_id;
           }).length;
-
-          // console.log("ACTUAL COUNT", actualCount);
-
           expect(article).toMatchObject({
             comment_count: expect.any(Number),
           });
 
-          // console.log(article.comment_count);
           expect(article.comment_count).toEqual(actualCount);
         });
       });
@@ -134,20 +126,18 @@ describe("task4- GET api/articles", () => {
       .get("/api/notarticles")
       .expect(404)
       .then((result) => {
-        // console.log("error result body", result.body);
         expect(result.status).toBe(404);
         expect(result.body.msg).toBe("Invalid path name, try again");
       });
   });
-  
-  
-  describe.only("task5- GET api/articles/:articleiD", () => {
+});
+
+describe("task5- GET api/articles/:articleiD", () => {
   test("returns a single object (with correct properties article) when id exists", () => {
     return request(app)
       .get("/api/articles/3")
       .expect(200)
       .then(({ body }) => {
-        // console.log("in test", body.article);
         const article = body.article;
         expect(article).toMatchObject({
           title: expect.any(String),
@@ -162,7 +152,7 @@ describe("task4- GET api/articles", () => {
         expect(Array.isArray(article)).toBe(false);
         expect(article.article_id).toBe(3);
       });
-
+  });
 
   test("returns the correct article object when id exists", () => {
     return request(app)
@@ -179,7 +169,6 @@ describe("task4- GET api/articles", () => {
       .get("/api/articles/698")
       .expect(404)
       .then((result) => {
-        // console.log("error result body", result.body);
         expect(result.status).toBe(404);
         expect(result.body.msg).toBe("Item not found, try again");
       });
@@ -190,8 +179,77 @@ describe("task4- GET api/articles", () => {
       .get("/api/articles/69w8")
       .expect(400)
       .then((result) => {
-        // console.log("error result body", result.body);
         expect(result.status).toBe(400);
-        expect(result.body.message).toBe("Invalid request, try again");
-});
+        expect(result.body.msg).toBe("Invalid request, try again");
+      });
   });
+});
+
+describe("task6- GET api/articles/:articleiD/comments", () => {
+  test("returns an array of comments (with correct properties article) when articleid given exists", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const comments = body.comments;
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            body: expect.any(String),
+            votes: expect.any(Number),
+            author: expect.any(String),
+            article_id: expect.any(Number),
+            created_at: expect.any(String),
+          });
+          expect(Array.isArray(comments)).toBe(true);
+        });
+      });
+  });
+
+  test("returns the correct array of comments with the correct article id when articleid given exists", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const comments = body.comments;
+        comments.forEach((comment) => {
+          expect(comment.article_id).toBe(1);
+        });
+      });
+  });
+
+  test("returns the correct array of comments in descending creation date order when articleid given exists", () => {
+    return request(app)
+      .get("/api/articles/5/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const comments = body.comments;
+        comments.forEach((comment) => {
+          expect(comment.article_id).toBe(5);
+        });
+        expect(comments).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+
+  test("returns an appropriate error message (404- No comments found) when no comments are found", () => {
+    return request(app)
+      .get("/api/articles/99/comments")
+      .expect(404)
+      .then((result) => {
+        expect(result.status).toBe(404);
+        expect(result.body.msg).toBe("No comments found, try again");
+      });
+  });
+
+  test("returns an appropriate error message (400- Invalid request) when path name contains a spelling error", () => {
+    return request(app)
+      .get("/api/articles/9w9/comments")
+      .expect(400)
+      .then((result) => {
+        expect(result.status).toBe(400);
+        expect(result.body.msg).toBe("Invalid request, try again");
+      });
+  });
+});

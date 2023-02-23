@@ -1,5 +1,10 @@
 const express = require("express");
-const { getTopics, getArticles, getArticleById } = require("./CONTROLLER");
+const {
+  getTopics,
+  getArticles,
+  getArticleById,
+  getCommentsByArticle,
+} = require("./CONTROLLER");
 const badPathHandler = require("./CONTROLLER errors");
 // const { handle500, handleCustomErrors } = require("./CONTROLLER errors");
 const app = express();
@@ -10,11 +15,12 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:articleId", getArticleById);
+app.get("/api/articles/:articleId/comments", getCommentsByArticle);
 
 app.use(handle400);
 app.use(handle404);
 
-// app.all("*", badPathHandler);
+app.all("*", badPathHandler);
 
 // app.use(handleCustomErrors);
 

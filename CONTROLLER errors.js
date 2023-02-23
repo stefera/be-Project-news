@@ -1,15 +1,16 @@
 module.exports = handle400 = (err, request, response, next) => {
   if (err.code) {
-    response.status(400).send({ message: "Invalid request, try again" });
+    response.status(400).send({ msg: "Invalid request, try again" });
   } else {
     next(err);
   }
 };
 
 module.exports = handle404 = (err, request, response, next) => {
-  // console.log("error arrived", err);
-  if ((err.status = 404)) {
-    response.status(404).send({ msg: "Item not found, try again" });
+  if ((err.status = 404) && !err.msg) {
+    response.status(err.status).send({ msg: "Item not found, try again" });
+  } else if ((err.status = 404) && err.msg) {
+    response.status(err.status).send({ msg: err.msg });
   } else {
     next(err);
   }
