@@ -83,11 +83,10 @@ const postAndReturnComment = (comment, article_id) => {
       [body, 0, username, article_id, new Date()]
     )
     .then(({ rows }) => {
-      console.log(rows);
       if (!rows[0]) {
         return Promise.reject({
-          status: 404,
-          msg: "No comments found, try again",
+          status: 400,
+          msg: "No comment provided, try again",
         });
       }
       return rows[0];

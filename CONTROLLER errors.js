@@ -1,6 +1,7 @@
 module.exports = handle400 = (err, request, response, next) => {
-  if (err.code) {
-    console.log(err);
+  if (err.code === "23502" || err.code === "23503") {
+    response.status(400).send({ msg: "Invalid comment provided, try again" });
+  } else if (err.code) {
     response.status(400).send({ msg: "Invalid request, try again" });
   } else {
     next(err);

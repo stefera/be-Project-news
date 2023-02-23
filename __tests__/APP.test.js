@@ -254,7 +254,7 @@ describe("task6- GET api/articles/:articleiD/comments", () => {
   });
 });
 
-describe.only("task7- POST /api/articles/:article_id/comments", () => {
+describe("task7- POST /api/articles/:article_id/comments", () => {
   test("posts and returns an object with the correct properties when given valid article_id", () => {
     const newCommentData = { body: "hi there", username: "icellusedkars" };
     return request(app)
@@ -277,50 +277,27 @@ describe.only("task7- POST /api/articles/:article_id/comments", () => {
       });
   });
 
-  // test("returns the correct array of comments with the correct article id when articleid given exists", () => {
-  //   return request(app)
-  //     .get("/api/articles/1/comments")
-  //     .expect(200)
-  //     .then(({ body }) => {
-  //       const comments = body.comments;
-  //       comments.forEach((comment) => {
-  //         expect(comment.article_id).toBe(1);
-  //       });
-  //     });
-  // });
+  test("returns a 400 error if the comment given to post has incorrect properties", () => {
+    const newCommentData = { body: 3, username: true };
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newCommentData)
+      .expect(400)
+      .then((result) => {
+        expect(result.status).toBe(400);
+        expect(result.body.msg).toBe("Invalid comment provided, try again");
+      });
+  });
 
-  // test("returns the correct array of comments in descending creation date order when articleid given exists", () => {
-  //   return request(app)
-  //     .get("/api/articles/5/comments")
-  //     .expect(200)
-  //     .then(({ body }) => {
-  //       const comments = body.comments;
-  //       comments.forEach((comment) => {
-  //         expect(comment.article_id).toBe(5);
-  //       });
-  //       expect(comments).toBeSortedBy("created_at", {
-  //         descending: true,
-  //       });
-  //     });
-  // });
-
-  // test("returns an appropriate error message (404- No comments found) when no comments are found", () => {
-  //   return request(app)
-  //     .get("/api/articles/99/comments")
-  //     .expect(404)
-  //     .then((result) => {
-  //       expect(result.status).toBe(404);
-  //       expect(result.body.msg).toBe("No comments found, try again");
-  //     });
-  // });
-
-  // test("returns an appropriate error message (400- Invalid request) when path name contains a spelling error", () => {
-  //   return request(app)
-  //     .get("/api/articles/9w9/comments")
-  //     .expect(400)
-  //     .then((result) => {
-  //       expect(result.status).toBe(400);
-  //       expect(result.body.msg).toBe("Invalid request, try again");
-  //     });
-  // });
+  test("returns a 400 error if no comment is passed to the body of the request comment given to post has incorrect properties", () => {
+    // const newCommentData = {};
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send()
+      .expect(400)
+      .then((result) => {
+        expect(result.status).toBe(400);
+        expect(result.body.msg).toBe("Invalid comment provided, try again");
+      });
+  });
 });
