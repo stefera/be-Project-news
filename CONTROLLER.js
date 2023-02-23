@@ -4,6 +4,7 @@ const {
   fetchSortedArticles,
   fetchArticleById,
   fetchCommentsByArticle,
+  postAndReturnComment,
 } = require("./MODELS");
 
 const getTopics = (request, response, next) => {
@@ -52,9 +53,21 @@ const getCommentsByArticle = (request, response, next) => {
     });
 };
 
+const postCommentByArticle = (request, response, next) => {
+  const { articleId } = request.params;
+  postAndReturnComment(request.body, articleId)
+    .then((comment) => {
+      response.status(201).send({ postedComment: comment });
+    })
+    .catch((err) => {
+      // console.log(err);
+      next(err);
+    });
+};
 module.exports = {
   getTopics,
   getArticles,
   getArticleById,
   getCommentsByArticle,
+  postCommentByArticle,
 };

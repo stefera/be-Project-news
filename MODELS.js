@@ -67,9 +67,37 @@ const fetchCommentsByArticle = (article_id) => {
     });
 };
 
+const postAndReturnComment = (comment, article_id) => {
+  const { body, username } = comment;
+  // console.log(2);
+  return db
+    .query(
+      `
+     INSERT INTO comments
+     (body, votes, author, article_id, created_at)
+     VALUES(
+      $1,$2,$3,$4,$5
+     )
+     RETURNING *;
+    `,
+      [body, 0, username, article_id, new Date()]
+    )
+    .then(({ rows }) => {
+      console.log(rows);
+      if (!rows[0]) {
+        return Promise.reject({
+          status: 404,
+          msg: "No comments found, try again",
+        });
+      }
+      return rows[0];
+    });
+};
+
 module.exports = {
   fetchTopics,
   fetchSortedArticles,
   fetchArticleById,
   fetchCommentsByArticle,
+  postAndReturnComment,
 };

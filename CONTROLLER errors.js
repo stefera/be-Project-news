@@ -1,5 +1,6 @@
 module.exports = handle400 = (err, request, response, next) => {
   if (err.code) {
+    console.log(err);
     response.status(400).send({ msg: "Invalid request, try again" });
   } else {
     next(err);
