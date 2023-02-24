@@ -5,6 +5,7 @@ const {
   fetchArticleById,
   fetchCommentsByArticle,
   postAndReturnComment,
+  fetchUsers,
 } = require("./MODELS");
 
 const getTopics = (request, response, next) => {
@@ -64,10 +65,23 @@ const postCommentByArticle = (request, response, next) => {
       next(err);
     });
 };
+
+const getUsers = (request, response, next) => {
+  fetchUsers()
+    .then((users) => {
+      response.status(200).send({ allUsers: users });
+    })
+    .catch((err) => {
+      // console.log("error in getUsers controller", err);
+      next(err);
+    });
+};
+
 module.exports = {
   getTopics,
   getArticles,
   getArticleById,
   getCommentsByArticle,
   postCommentByArticle,
+  getUsers,
 };

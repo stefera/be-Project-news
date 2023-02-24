@@ -93,10 +93,32 @@ const postAndReturnComment = (comment, article_id) => {
     });
 };
 
+const fetchUsers = () => {
+  return db
+    .query(
+      `
+     SELECT username, name, avatar_url 
+     FROM users
+     
+    `
+    )
+    .then(({ rows }) => {
+      if (!rows[0]) {
+        return Promise.reject({
+          status: 400,
+          msg: "No users available, try again",
+        });
+      }
+      // console.log(rows);
+      return rows;
+    });
+};
+
 module.exports = {
   fetchTopics,
   fetchSortedArticles,
   fetchArticleById,
   fetchCommentsByArticle,
   postAndReturnComment,
+  fetchUsers,
 };
