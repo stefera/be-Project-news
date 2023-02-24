@@ -238,7 +238,6 @@ describe("task6- GET api/articles/:articleiD/comments", () => {
       .get("/api/articles/99870987/comments")
       .expect(404)
       .then((result) => {
-        expect(result.status).toBe(404);
         expect(result.body.msg).toBe("No comments found, try again");
       });
   });
@@ -248,7 +247,6 @@ describe("task6- GET api/articles/:articleiD/comments", () => {
       .get("/api/articles/9w9/comments")
       .expect(400)
       .then((result) => {
-        expect(result.status).toBe(400);
         expect(result.body.msg).toBe("Invalid request, try again");
       });
   });
@@ -317,7 +315,6 @@ describe("task8- PATCH api/articles/:articleiD/comments", () => {
       .send(votesObj)
       .expect(400)
       .then((result) => {
-        expect(result.status).toBe(400);
         expect(result.body.msg).toBe(
           "Invalid request, not enough votes. Please try again"
         );
@@ -331,7 +328,6 @@ describe("task8- PATCH api/articles/:articleiD/comments", () => {
       .send(votesObj)
       .expect(400)
       .then((result) => {
-        expect(result.status).toBe(400);
         expect(result.body.msg).toBe("Invalid request, try again");
       });
   });
@@ -343,7 +339,6 @@ describe("task8- PATCH api/articles/:articleiD/comments", () => {
       .send(votesObj)
       .expect(400)
       .then((result) => {
-        expect(result.status).toBe(400);
         expect(result.body.msg).toBe("Invalid request, try again");
       });
   });
@@ -355,7 +350,6 @@ describe("task8- PATCH api/articles/:articleiD/comments", () => {
       .send(votesObj)
       .expect(404)
       .then((result) => {
-        expect(result.status).toBe(404);
         expect(result.body.msg).toBe("Item not found, try again");
       });
   });
