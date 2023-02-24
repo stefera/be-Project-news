@@ -235,7 +235,7 @@ describe("task6- GET api/articles/:articleiD/comments", () => {
 
   test("returns an appropriate error message (404- No comments found) when no comments are found", () => {
     return request(app)
-      .get("/api/articles/99/comments")
+      .get("/api/articles/99870987/comments")
       .expect(404)
       .then((result) => {
         expect(result.status).toBe(404);
@@ -250,6 +250,113 @@ describe("task6- GET api/articles/:articleiD/comments", () => {
       .then((result) => {
         expect(result.status).toBe(400);
         expect(result.body.msg).toBe("Invalid request, try again");
+      });
+  });
+});
+
+describe("task8- PATCH api/articles/:articleiD/comments", () => {
+  test("returns an object article (with correct properties) when articleid given exists", () => {
+    const votesObj = { inc_votes: 3 };
+    return request(app)
+      .patch("/api/articles/3")
+      .send(votesObj)
+      .expect(200)
+      .then(({ body }) => {
+        const article = body.updatedArticle;
+        expect(article).toMatchObject({
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          article_img_url: expect.any(String),
+          votes: expect.any(Number),
+        });
+
+        expect(typeof article).toBe("object");
+        expect(Array.isArray(article)).toBe(false);
+      });
+  });
+
+  test("returns an object article with the correct nnumber of votes when object passed has a positive vote number", () => {
+    const votesObj = { inc_votes: 3 };
+    return request(app)
+      .patch("/api/articles/3")
+      .send(votesObj)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.updatedArticle.votes).toBe(3);
+      });
+  });
+
+  test("returns an object article with the correct number of votes when object passed has a negative vote number (less than or equal to existing vote number)", () => {
+    const votesObj1 = { inc_votes: 10 };
+    const votesObj2 = { inc_votes: -4 };
+
+    request(app)
+      .patch("/api/articles/2")
+      .send(votesObj1)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.updatedArticle.votes).toBe(10);
+      });
+
+    return request(app)
+      .patch("/api/articles/2")
+      .send(votesObj2)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.updatedArticle.votes).toBe(6);
+      });
+  });
+
+  test("returns a 400 error (invalid request) when when object passed has a negative vote number greater than the existing vote number)", () => {
+    const votesObj = { inc_votes: -10 };
+    return request(app)
+      .patch("/api/articles/3")
+      .send(votesObj)
+      .expect(400)
+      .then((result) => {
+        expect(result.status).toBe(400);
+        expect(result.body.msg).toBe(
+          "Invalid request, not enough votes. Please try again"
+        );
+      });
+  });
+
+  test("returns a 400 error (invalid request) when object passed has a vote property of incorrect type", () => {
+    const votesObj = { inc_votes: true };
+    return request(app)
+      .patch("/api/articles/3")
+      .send(votesObj)
+      .expect(400)
+      .then((result) => {
+        expect(result.status).toBe(400);
+        expect(result.body.msg).toBe("Invalid request, try again");
+      });
+  });
+
+  test("returns a 400 error (invalid request) when object passed is empty", () => {
+    const votesObj = {};
+    return request(app)
+      .patch("/api/articles/3")
+      .send(votesObj)
+      .expect(400)
+      .then((result) => {
+        expect(result.status).toBe(400);
+        expect(result.body.msg).toBe("Invalid request, try again");
+      });
+  });
+
+  test("returns a 404 error (Not found) when article does not exist", () => {
+    const votesObj = { inc_votes: "3" };
+    return request(app)
+      .patch("/api/articles/192833")
+      .send(votesObj)
+      .expect(404)
+      .then((result) => {
+        expect(result.status).toBe(404);
+        expect(result.body.msg).toBe("Item not found, try again");
       });
   });
 });

@@ -4,6 +4,7 @@ const {
   fetchSortedArticles,
   fetchArticleById,
   fetchCommentsByArticle,
+  incrementVotesByArticle,
 } = require("./MODELS");
 
 const getTopics = (request, response, next) => {
@@ -47,6 +48,23 @@ const getCommentsByArticle = (request, response, next) => {
       response.status(200).send({ comments: selectedComments });
     })
     .catch((err) => {
+      // console.log("error in getCommentsByArticle controller", err);
+      next(err);
+    });
+};
+
+const patchVotesByArticle = (request, response, next) => {
+  const { articleId } = request.params;
+  const votesObj = request.body;
+  // console.log("article ID", articleId);
+  // console.log("votesObj", votesObj);
+
+  incrementVotesByArticle(votesObj, articleId)
+    .then((article) => {
+      console.log(article);
+      response.status(200).send({ updatedArticle: article });
+    })
+    .catch((err) => {
       // console.log(err);
       next(err);
     });
@@ -57,4 +75,5 @@ module.exports = {
   getArticles,
   getArticleById,
   getCommentsByArticle,
+  patchVotesByArticle,
 };

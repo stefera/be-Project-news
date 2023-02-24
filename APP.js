@@ -4,6 +4,7 @@ const {
   getArticles,
   getArticleById,
   getCommentsByArticle,
+  patchVotesByArticle,
 } = require("./CONTROLLER");
 const badPathHandler = require("./CONTROLLER errors");
 // const { handle500, handleCustomErrors } = require("./CONTROLLER errors");
@@ -16,6 +17,8 @@ app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:articleId", getArticleById);
 app.get("/api/articles/:articleId/comments", getCommentsByArticle);
+
+app.patch("/api/articles/:articleId", patchVotesByArticle);
 
 app.use(handlePsql);
 app.use(handleCustomErrors);
