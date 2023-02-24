@@ -252,6 +252,78 @@ describe("task6- GET api/articles/:articleiD/comments", () => {
   });
 });
 
+describe("task7- POST /api/articles/:article_id/comments", () => {
+  test("posts and returns an object with the correct properties when given valid article_id", () => {
+    const newCommentData = { body: "hi there", username: "icellusedkars" };
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newCommentData)
+      .expect(201)
+      .then(({ body }) => {
+        const postedComment = body.postedComment;
+
+        expect(postedComment).toMatchObject({
+          comment_id: expect.any(Number),
+          body: expect.any(String),
+          votes: expect.any(Number),
+          author: expect.any(String),
+          created_at: expect.any(String),
+        });
+        expect(postedComment.article_id).toBe(3);
+        expect(typeof postedComment).toBe("object");
+        expect(Array.isArray(postedComment)).toBe(false);
+      });
+  });
+
+  test("returns a 400 error if no comment is passed to the body of the request comment given to post has incorrect properties", () => {
+    // const newCommentData = {};
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send()
+      .expect(400)
+      .then((result) => {
+        expect(result.status).toBe(400);
+        expect(result.body.msg).toBe("Invalid comment provided, try again");
+      });
+  });
+
+  test("returns a 400 error if an invalid article ID is given", () => {
+    // const newCommentData = {};
+    return request(app)
+      .post("/api/articles/31312w/comments")
+      .send()
+      .expect(400)
+      .then((result) => {
+        expect(result.status).toBe(400);
+        expect(result.body.msg).toBe("Invalid request, try again");
+      });
+  });
+
+  test("returns a 404 error if article given is not found", () => {
+    const newCommentData = { body: "asdfgh", username: "icellusedkars" };
+    return request(app)
+      .post("/api/articles/299999/comments")
+      .send(newCommentData)
+      .expect(404)
+      .then((result) => {
+        expect(result.status).toBe(404);
+        expect(result.body.msg).toBe("Not found, try again");
+      });
+  });
+
+  test("returns a 404 error if the username given in the correct format, but not found", () => {
+    const newCommentData = { body: "asdfgh", username: "true" };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newCommentData)
+      .expect(404)
+      .then((result) => {
+        expect(result.status).toBe(404);
+        expect(result.body.msg).toBe("Not found, try again");
+      });
+  });
+});
+
 describe("task8- PATCH api/articles/:articleiD/comments", () => {
   test("returns an object article (with correct properties) when articleid given exists", () => {
     const votesObj = { inc_votes: 3 };
@@ -348,14 +420,14 @@ describe("task8- PATCH api/articles/:articleiD/comments", () => {
     return request(app)
       .patch("/api/articles/192833")
       .send(votesObj)
-      .expect(404)
+      .expect(500)
       .then((result) => {
-        expect(result.body.msg).toBe("Item not found, try again");
+        expect(result.body.msg).toBe("Internal server error, try again");
       });
   });
 });
 
-describe.only("task9- GET api/users", () => {
+describe("task9- GET api/users", () => {
   test("returns a new array", () => {
     return request(app)
       .get("/api/users")

@@ -45,10 +45,10 @@ module.exports = handle404 = (err, request, response, next) => {
   }
 };
 module.exports = handle500 = (err, request, response, next) => {
-  // console.log("500 error in handler", err);
+  console.log("500 error in handler", !err.msg);
 
   if (!err.status || !err.msg) {
-    response.status(500).send({ message: "Internal server error" });
+    response.status(500).send({ msg: "Internal server error, try again" });
   }
 };
 
