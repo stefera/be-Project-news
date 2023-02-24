@@ -93,6 +93,31 @@ const postAndReturnComment = (comment, article_id) => {
     });
 };
 
+const incrementVotesByArticle = (votesObj, article_id) => {
+  const { inc_votes } = votesObj;
+
+  return db
+    .query(
+      `
+     UPDATE articles
+     SET
+     votes = votes + ${inc_votes}
+     WHERE article_id = ${article_id}
+     RETURNING *;
+    `
+    )
+    .then(({ rows }) => {
+      if (rows[0].votes < 0) {
+        return Promise.reject({
+          status: 400,
+          msg: "Invalid request, not enough votes. Please try again",
+        });
+      }
+      return rows[0];
+    });
+};
+
+
 const fetchUsers = () => {
   return db
     .query(
@@ -114,11 +139,13 @@ const fetchUsers = () => {
     });
 };
 
+
 module.exports = {
   fetchTopics,
   fetchSortedArticles,
   fetchArticleById,
   fetchCommentsByArticle,
   postAndReturnComment,
-  fetchUsers,
+    incrementVotesByArticle,
+fetchUsers
 };

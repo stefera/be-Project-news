@@ -4,13 +4,17 @@ module.exports = handlePsql = (err, request, response, next) => {
     response.status(400).send({ msg: "Invalid comment provided, try again" });
   } else if (err.code === "23593" || err.code === "23503") {
     response.status(404).send({ msg: "Not found, try again" });
+  } else if (err.code === "42883" || err.code === "42703") {
+    response.status(400).send({ msg: "Invalid request, try again" });
+
+    //42883
   } else {
     next(err);
   }
 };
 //p20202
 module.exports = handleCustomErrors = (err, request, response, next) => {
-  // console.log("error in customhandler", err);
+  console.log("error in customhandler", err);
 
   if (err.status && err.msg) {
     response.status(err.status).send({ msg: err.msg });
