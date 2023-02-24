@@ -7,8 +7,7 @@ const {
   postAndReturnComment,
   fetchUsers,
 
-
-incrementVotesByArticle
+  incrementVotesByArticle,
 } = require("./MODELS");
 
 const getTopics = (request, response, next) => {
@@ -17,7 +16,7 @@ const getTopics = (request, response, next) => {
       response.status(200).send(result);
     })
     .catch((err) => {
-      // console.log(err);
+      // console.log(err in getTopics);
       next(err);
     });
 };
@@ -28,7 +27,7 @@ const getArticles = (request, response, next) => {
       response.status(200).send({ articles: finalResult });
     })
     .catch((err) => {
-      // console.log(err);
+      // console.log(error in getArticles);
       next(err);
     });
 };
@@ -40,7 +39,7 @@ const getArticleById = (request, response, next) => {
       response.status(200).send({ article: selectedArticle });
     })
     .catch((err) => {
-      // console.log(err);
+      // console.log(error in getArticleById);
       next(err);
     });
 };
@@ -75,15 +74,13 @@ const patchVotesByArticle = (request, response, next) => {
 
   incrementVotesByArticle(votesObj, articleId)
     .then((article) => {
-      console.log(article);
       response.status(200).send({ updatedArticle: article });
     })
     .catch((err) => {
-      // console.log(err);
+      // console.log(error in patchVotesByArticle);
       next(err);
     });
 };
-
 
 const getUsers = (request, response, next) => {
   fetchUsers()
@@ -103,5 +100,5 @@ module.exports = {
   getCommentsByArticle,
   postCommentByArticle,
   getUsers,
-  patchVotesByArticle
+  patchVotesByArticle,
 };

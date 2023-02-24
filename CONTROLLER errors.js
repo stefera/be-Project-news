@@ -14,7 +14,7 @@ module.exports = handlePsql = (err, request, response, next) => {
 };
 //p20202
 module.exports = handleCustomErrors = (err, request, response, next) => {
-  console.log("error in customhandler", err);
+  // console.log("error in customhandler", err);
 
   if (err.status && err.msg) {
     response.status(err.status).send({ msg: err.msg });
@@ -24,15 +24,6 @@ module.exports = handleCustomErrors = (err, request, response, next) => {
     next(err);
   }
 };
-
-// module.exports = handle400 = (err, request, response, next) => {
-//   // if (err.code !== "23593") {
-//   //
-//   //   // else if (err.code && err.msg) {
-//   //   //   console.log("here");
-//   //   //   response.status(400).send({ msg: err.msg });
-//   //   // }
-// };
 
 module.exports = handle404 = (err, request, response, next) => {
   // console.log("404 error in handler", err);
@@ -45,7 +36,7 @@ module.exports = handle404 = (err, request, response, next) => {
   }
 };
 module.exports = handle500 = (err, request, response, next) => {
-  console.log("500 error in handler", !err.msg);
+  // console.log("500 error in handler", !err.msg);
 
   if (!err.status || !err.msg) {
     response.status(500).send({ msg: "Internal server error, try again" });
