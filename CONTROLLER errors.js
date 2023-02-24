@@ -1,23 +1,37 @@
-module.exports = handle400 = (err, request, response, next) => {
-  if (err.code !== "23593") {
-    if (err.code === "23502" || err.code === "23503") {
-      response.status(400).send({ msg: "Invalid comment provided, try again" });
-    }
-    // else if (err.code && err.msg) {
-    //   console.log("here");
-    //   response.status(400).send({ msg: err.msg });
-    // }
+module.exports = handlePsql = (err, request, response, next) => {
+  // console.log("psql error in handler", err);
+  if (err.code === "23502") {
+    response.status(400).send({ msg: "Invalid comment provided, try again" });
+  } else if (err.code === "23593" || err.code === "23503") {
+    response.status(404).send({ msg: "Not found, try again" });
+  } else {
+    next(err);
   }
-  if (err.code) {
-    console.log("here");
+};
+//p20202
+module.exports = handleCustomErrors = (err, request, response, next) => {
+  // console.log("error in customhandler", err);
+
+  if (err.status && err.msg) {
+    response.status(err.status).send({ msg: err.msg });
+  } else if (err.code) {
     response.status(400).send({ msg: "Invalid request, try again" });
   } else {
     next(err);
   }
 };
 
+// module.exports = handle400 = (err, request, response, next) => {
+//   // if (err.code !== "23593") {
+//   //
+//   //   // else if (err.code && err.msg) {
+//   //   //   console.log("here");
+//   //   //   response.status(400).send({ msg: err.msg });
+//   //   // }
+// };
+
 module.exports = handle404 = (err, request, response, next) => {
-  console.log("404", err);
+  // console.log("404 error in handler", err);
   if ((err.status = 404) && !err.msg) {
     response.status(err.status).send({ msg: "Item not found, try again" });
   } else if ((err.status = 404) && err.msg) {
@@ -26,23 +40,17 @@ module.exports = handle404 = (err, request, response, next) => {
     next(err);
   }
 };
+module.exports = handle500 = (err, request, response, next) => {
+  // console.log("500 error in handler", err);
+
+  if (!err.status || !err.msg) {
+    response.status(500).send({ message: "Internal server error" });
+  }
+};
+
 module.exports = badPathHandler = (request, response) => {
-  console.log("here123");
+  // console.log("badpath error in handler", err);
   {
     response.status(404).send({ msg: "Invalid path name, try again" });
   }
 };
-
-// module.exports = handleCustomErrors = (err, request, response, next) => {
-//   if (err.status && err.msg) {
-//     response.status(err.status).send({ message: err.msg });
-//   } else {
-//     next(err);
-//   }
-// };
-
-// module.exports = handle500 = (err, request, response, next) => {
-//   if (!err.status || !err.msg) {
-//     response.status(500).send({ message: "Internal server error" });
-//   }
-// };

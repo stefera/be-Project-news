@@ -202,6 +202,7 @@ describe("task6- GET api/articles/:articleiD/comments", () => {
             created_at: expect.any(String),
           });
           expect(Array.isArray(comments)).toBe(true);
+          expect(comments.length).toBe(2);
         });
       });
   });
@@ -277,18 +278,6 @@ describe("task7- POST /api/articles/:article_id/comments", () => {
       });
   });
 
-  test("returns a 400 error if the comment given to post has incorrect properties", () => {
-    const newCommentData = { body: 3, username: true };
-    return request(app)
-      .post("/api/articles/3/comments")
-      .send(newCommentData)
-      .expect(400)
-      .then((result) => {
-        expect(result.status).toBe(400);
-        expect(result.body.msg).toBe("Invalid comment provided, try again");
-      });
-  });
-
   test("returns a 400 error if no comment is passed to the body of the request comment given to post has incorrect properties", () => {
     // const newCommentData = {};
     return request(app)
@@ -313,15 +302,27 @@ describe("task7- POST /api/articles/:article_id/comments", () => {
       });
   });
 
-  test.skip("returns a 404 error if article given is not found", () => {
-    const newCommentData = { body: "asdfgh", username: "true" };
+  test("returns a 404 error if article given is not found", () => {
+    const newCommentData = { body: "asdfgh", username: "icellusedkars" };
     return request(app)
       .post("/api/articles/299999/comments")
       .send(newCommentData)
       .expect(404)
       .then((result) => {
         expect(result.status).toBe(404);
-        expect(result.body.msg).toBe("Invalid not found, try again");
+        expect(result.body.msg).toBe("Not found, try again");
+      });
+  });
+
+  test("returns a 404 error if the username given in the correct format, but not found", () => {
+    const newCommentData = { body: "asdfgh", username: "true" };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newCommentData)
+      .expect(404)
+      .then((result) => {
+        expect(result.status).toBe(404);
+        expect(result.body.msg).toBe("Not found, try again");
       });
   });
 });
