@@ -67,6 +67,32 @@ const fetchCommentsByArticle = (article_id) => {
     });
 };
 
+const postAndReturnComment = (comment, article_id) => {
+  const { body, username } = comment;
+  // console.log(2);
+  return db
+    .query(
+      `
+     INSERT INTO comments
+     (body, author, article_id)
+     VALUES(
+      $1,$2,$3
+     )
+     RETURNING *;
+    `,
+      [body, username, article_id]
+    )
+    .then(({ rows }) => {
+      if (!rows[0]) {
+        return Promise.reject({
+          status: 400,
+          msg: "No comment provided, try again",
+        });
+      }
+      return rows[0];
+    });
+};
+
 const incrementVotesByArticle = (votesObj, article_id) => {
   const { inc_votes } = votesObj;
 
@@ -90,10 +116,36 @@ const incrementVotesByArticle = (votesObj, article_id) => {
       return rows[0];
     });
 };
+
+
+const fetchUsers = () => {
+  return db
+    .query(
+      `
+     SELECT username, name, avatar_url 
+     FROM users
+     
+    `
+    )
+    .then(({ rows }) => {
+      if (!rows[0]) {
+        return Promise.reject({
+          status: 400,
+          msg: "No users available, try again",
+        });
+      }
+      // console.log(rows);
+      return rows;
+    });
+};
+
+
 module.exports = {
   fetchTopics,
   fetchSortedArticles,
   fetchArticleById,
   fetchCommentsByArticle,
-  incrementVotesByArticle,
+  postAndReturnComment,
+    incrementVotesByArticle,
+fetchUsers
 };

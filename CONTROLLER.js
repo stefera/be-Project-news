@@ -4,7 +4,11 @@ const {
   fetchSortedArticles,
   fetchArticleById,
   fetchCommentsByArticle,
-  incrementVotesByArticle,
+  postAndReturnComment,
+  fetchUsers,
+
+
+incrementVotesByArticle
 } = require("./MODELS");
 
 const getTopics = (request, response, next) => {
@@ -53,6 +57,18 @@ const getCommentsByArticle = (request, response, next) => {
     });
 };
 
+const postCommentByArticle = (request, response, next) => {
+  const { articleId } = request.params;
+  postAndReturnComment(request.body, articleId)
+    .then((comment) => {
+      response.status(201).send({ postedComment: comment });
+    })
+    .catch((err) => {
+      // console.log("error in postCommentBYArticle controller", err);
+      next(err);
+    });
+};
+
 const patchVotesByArticle = (request, response, next) => {
   const { articleId } = request.params;
   const votesObj = request.body;
@@ -68,10 +84,24 @@ const patchVotesByArticle = (request, response, next) => {
     });
 };
 
+
+const getUsers = (request, response, next) => {
+  fetchUsers()
+    .then((users) => {
+      response.status(200).send({ allUsers: users });
+    })
+    .catch((err) => {
+      // console.log("error in getUsers controller", err);
+      next(err);
+    });
+};
+
 module.exports = {
   getTopics,
   getArticles,
   getArticleById,
   getCommentsByArticle,
-  patchVotesByArticle,
+  postCommentByArticle,
+  getUsers,
+  patchVotesByArticle
 };

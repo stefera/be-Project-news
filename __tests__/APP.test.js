@@ -354,3 +354,46 @@ describe("task8- PATCH api/articles/:articleiD/comments", () => {
       });
   });
 });
+
+describe.only("task9- GET api/users", () => {
+  test("returns a new array", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const users = body.allUsers;
+        expect(users).not.toBe(userData);
+        expect(userData).not.toBe(users);
+        expect(Array.isArray(users)).toBe(true);
+      });
+  });
+  test("returns a correct array of all users objects, each item with the  only the three correct requested properties", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const users = body.allUsers;
+        users.forEach((user) => {
+          expect(typeof user).toBe("object");
+          expect(Array.isArray(user)).toBe(false);
+
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+        expect(users.length).toBe(4);
+      });
+  });
+
+  test("responds with an appropriate error message when users endpoint is misspelt", () => {
+    return request(app)
+      .get("/api/notusers")
+      .expect(404)
+      .then((result) => {
+        expect(result.status).toBe(404);
+        expect(result.body.msg).toBe("Invalid path name, try again");
+      });
+  });
+});
