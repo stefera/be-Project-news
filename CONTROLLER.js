@@ -56,8 +56,6 @@ const getCommentsByArticle = (request, response, next) => {
 const patchVotesByArticle = (request, response, next) => {
   const { articleId } = request.params;
   const votesObj = request.body;
-  // console.log("article ID", articleId);
-  // console.log("votesObj", votesObj);
 
   incrementVotesByArticle(votesObj, articleId)
     .then((article) => {
