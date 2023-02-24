@@ -17,8 +17,10 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:articleId", getArticleById);
 app.get("/api/articles/:articleId/comments", getCommentsByArticle);
 
-app.use(handle400);
+app.use(handlePsql);
+app.use(handleCustomErrors);
 app.use(handle404);
+app.use(handle500);
 
 app.all("*", badPathHandler);
 
