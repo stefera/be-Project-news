@@ -67,9 +67,36 @@ const fetchCommentsByArticle = (article_id) => {
     });
 };
 
+const postAndReturnComment = (comment, article_id) => {
+  const { body, username } = comment;
+  // console.log(2);
+  return db
+    .query(
+      `
+     INSERT INTO comments
+     (body, author, article_id)
+     VALUES(
+      $1,$2,$3
+     )
+     RETURNING *;
+    `,
+      [body, username, article_id]
+    )
+    .then(({ rows }) => {
+      if (!rows[0]) {
+        return Promise.reject({
+          status: 400,
+          msg: "No comment provided, try again",
+        });
+      }
+      return rows[0];
+    });
+};
+
 module.exports = {
   fetchTopics,
   fetchSortedArticles,
   fetchArticleById,
   fetchCommentsByArticle,
+  postAndReturnComment,
 };
