@@ -67,36 +67,33 @@ const fetchCommentsByArticle = (article_id) => {
     });
 };
 
-const postAndReturnComment = (comment, article_id) => {
-  const { body, username } = comment;
-  // console.log(2);
+const incrementVotesByArticle = (votesObj, article_id) => {
+  const { inc_votes } = votesObj;
+
   return db
     .query(
       `
-     INSERT INTO comments
-     (body, author, article_id)
-     VALUES(
-      $1,$2,$3
-     )
+     UPDATE articles
+     SET
+     votes = votes + ${inc_votes}
+     WHERE article_id = ${article_id}
      RETURNING *;
-    `,
-      [body, username, article_id]
+    `
     )
     .then(({ rows }) => {
-      if (!rows[0]) {
+      if (rows[0].votes < 0) {
         return Promise.reject({
           status: 400,
-          msg: "No comment provided, try again",
+          msg: "Invalid request, not enough votes. Please try again",
         });
       }
       return rows[0];
     });
 };
-
 module.exports = {
   fetchTopics,
   fetchSortedArticles,
   fetchArticleById,
   fetchCommentsByArticle,
-  postAndReturnComment,
+  incrementVotesByArticle,
 };
