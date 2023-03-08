@@ -469,3 +469,15 @@ describe("task9- GET api/users", () => {
       });
   });
 });
+
+describe.only("task10- GET api/articles?query", () => {
+  test("returns a new array", () => {
+    return request(app)
+      .get("/api/articles?query")
+      .expect(200)
+      .then(({ body }) => {
+        // console.log(body.articles);
+        expect(Array.isArray(body.articles)).toBe(true);
+      });
+  });
+});

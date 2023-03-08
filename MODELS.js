@@ -69,7 +69,6 @@ const fetchCommentsByArticle = (article_id) => {
 
 const postAndReturnComment = (comment, article_id) => {
   const { body, username } = comment;
-  // console.log(2);
   return db
     .query(
       `
@@ -117,7 +116,6 @@ const incrementVotesByArticle = (votesObj, article_id) => {
     });
 };
 
-
 const fetchUsers = () => {
   return db
     .query(
@@ -134,11 +132,31 @@ const fetchUsers = () => {
           msg: "No users available, try again",
         });
       }
-      // console.log(rows);
       return rows;
     });
 };
 
+const fetchArticlesByQuery = (params) => {
+  const queryValues = [];
+  let queryStr = `SELECT * FROM articles`;
+
+  // if (){}
+  return db
+    .query(
+      `
+     ${queryStr}
+       `
+    )
+    .then(({ rows }) => {
+      if (!rows[0]) {
+        return Promise.reject({
+          status: 400,
+          msg: "No users available, try again",
+        });
+      }
+      return rows;
+    });
+};
 
 module.exports = {
   fetchTopics,
@@ -146,6 +164,7 @@ module.exports = {
   fetchArticleById,
   fetchCommentsByArticle,
   postAndReturnComment,
-    incrementVotesByArticle,
-fetchUsers
+  incrementVotesByArticle,
+  fetchUsers,
+  fetchArticlesByQuery,
 };
