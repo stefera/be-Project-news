@@ -11,7 +11,9 @@ const {
 const badPathHandler = require("./CONTROLLER errors");
 // const { handle500, handleCustomErrors } = require("./CONTROLLER errors");
 const app = express();
+const cors = require("cors");
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/api/topics", getTopics);
