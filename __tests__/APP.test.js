@@ -469,3 +469,72 @@ describe("task9- GET api/users", () => {
       });
   });
 });
+
+describe("task10- GET api/articles?filtered", () => {
+  test("returns a new array", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        // console.log(body.articles);
+        const articles = body.articles;
+        expect(articles).not.toBe(articleData);
+        expect(Array.isArray(articles)).toBe(true);
+      });
+  });
+  test("returns a correct array of objects, all of which have the correct topic", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        const articles = body.articles;
+        articles.forEach((article) => {
+          expect(typeof article).toBe("object");
+          expect(Array.isArray(article)).toBe(false);
+
+          expect(article).toMatchObject({
+            title: expect.any(String),
+            topic: "mitch",
+            author: expect.any(String),
+            created_at: expect.any(String),
+            article_img_url: expect.any(String),
+          });
+
+          expect(article.topic).toBe("mitch");
+        });
+      });
+  });
+
+  test("returns a array of objects in the correct order when passed a sortBy value", () => {
+    return request(app)
+      .get("/api/articles?sortBy=comment_count")
+      .expect(200)
+      .then(({ body }) => {
+        const articles = body.articles;
+        articles.forEach((article) => {
+          expect(typeof article).toBe("object");
+          expect(Array.isArray(article)).toBe(false);
+
+          expect(articles).toBeSortedBy("comment_count", { descending: true });
+
+          expect(article).toMatchObject({
+            title: expect.any(String),
+
+            author: expect.any(String),
+            created_at: expect.any(String),
+            article_img_url: expect.any(String),
+          });
+        });
+      });
+  });
+
+  test("responds with an appropriate error message when given a filter that does not exist", () => {
+    return request(app)
+      .get("/api/articles?topic=unknown")
+      .expect(404)
+      .then((result) => {
+        expect(result.status).toBe(404);
+        expect(result.body.msg).toBe("No articles found. Please try again");
+      });
+  });
+});

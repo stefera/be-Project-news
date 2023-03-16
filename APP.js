@@ -7,6 +7,7 @@ const {
   postCommentByArticle,
   patchVotesByArticle,
   getUsers,
+  getArticlesByQuery,
 } = require("./CONTROLLER");
 const badPathHandler = require("./CONTROLLER errors");
 // const { handle500, handleCustomErrors } = require("./CONTROLLER errors");
@@ -24,8 +25,6 @@ app.get("/api/articles/:articleId/comments", getCommentsByArticle);
 app.post("/api/articles/:articleId/comments", postCommentByArticle);
 app.get("/api/users", getUsers);
 app.patch("/api/articles/:articleId", patchVotesByArticle);
-
-// app.patch("/api/articles/?query", getArticlesByQuery);
 
 app.use(handlePsql);
 app.use(handleCustomErrors);
