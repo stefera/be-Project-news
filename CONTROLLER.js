@@ -7,6 +7,7 @@ const {
   postAndReturnComment,
   fetchUsers,
   incrementVotesByArticle,
+  fetchArticlesByQuery,
 } = require("./MODELS");
 
 const getTopics = (request, response, next) => {
@@ -22,13 +23,13 @@ const getTopics = (request, response, next) => {
 
 const getArticles = (request, response, next) => {
   const { topic, sortBy } = request.query;
-  console.log(topic, sortBy, "in controller");
+  // console.log(topic, sortBy, "in controller");
   fetchSortedArticles(request)
     .then((finalResult) => {
       response.status(200).send({ articles: finalResult });
     })
     .catch((err) => {
-      console.log(err, "error in getArticles");
+      // console.log(err, "error in getArticles");
       next(err);
     });
 };
@@ -94,6 +95,21 @@ const getUsers = (request, response, next) => {
     });
 };
 
+const getArticlesByQuery = (request, response, next) => {
+  const { params } = request.body;
+  console.log("params", params);
+  console.log("body", request.body);
+
+  fetchArticlesByQuery(params)
+    .then((users) => {
+      response.status(200).send({ allUsers: users });
+    })
+    .catch((err) => {
+      // console.log("error in getUsers controller", err);
+      next(err);
+    });
+};
+
 module.exports = {
   getTopics,
   getArticles,
@@ -102,4 +118,5 @@ module.exports = {
   postCommentByArticle,
   getUsers,
   patchVotesByArticle,
+  getArticlesByQuery,
 };

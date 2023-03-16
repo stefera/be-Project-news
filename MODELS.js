@@ -102,7 +102,6 @@ const fetchCommentsByArticle = (article_id) => {
 
 const postAndReturnComment = (comment, article_id) => {
   const { body, username } = comment;
-  // console.log(2);
   return db
     .query(
       `
@@ -166,7 +165,6 @@ const fetchUsers = () => {
           msg: "No users available, try again",
         });
       }
-      // console.log(rows);
       return rows;
     });
 };

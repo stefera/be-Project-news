@@ -7,6 +7,7 @@ const {
   postCommentByArticle,
   patchVotesByArticle,
   getUsers,
+  getArticlesByQuery,
 } = require("./CONTROLLER");
 const badPathHandler = require("./CONTROLLER errors");
 // const { handle500, handleCustomErrors } = require("./CONTROLLER errors");
