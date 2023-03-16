@@ -25,8 +25,6 @@ app.post("/api/articles/:articleId/comments", postCommentByArticle);
 app.get("/api/users", getUsers);
 app.patch("/api/articles/:articleId", patchVotesByArticle);
 
-// app.patch("/api/articles/?query", getArticlesByQuery);
-
 app.use(handlePsql);
 app.use(handleCustomErrors);
 // app.use(handle400);

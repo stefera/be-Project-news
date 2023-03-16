@@ -6,7 +6,6 @@ const {
   fetchCommentsByArticle,
   postAndReturnComment,
   fetchUsers,
-
   incrementVotesByArticle,
 } = require("./MODELS");
 
@@ -22,12 +21,14 @@ const getTopics = (request, response, next) => {
 };
 
 const getArticles = (request, response, next) => {
-  fetchSortedArticles()
+  const { topic, sortBy } = request.query;
+  console.log(topic, sortBy, "in controller");
+  fetchSortedArticles(request)
     .then((finalResult) => {
       response.status(200).send({ articles: finalResult });
     })
     .catch((err) => {
-      // console.log(error in getArticles);
+      console.log(err, "error in getArticles");
       next(err);
     });
 };

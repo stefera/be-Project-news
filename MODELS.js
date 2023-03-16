@@ -13,18 +13,51 @@ const fetchTopics = () => {
     });
 };
 
-const fetchSortedArticles = () => {
+const fetchSortedArticles = (request) => {
+  const { topic, sortBy, order = "desc" } = request.query;
+  const queryValues = [];
+  let queryStrFilter = "";
+  let queryStrSortBy = "";
+  const acceptedSorts = ["created_at", "comment_count", "votes"];
+  const acceptedOrders = ["asc", "desc"];
+
+  if (topic) {
+    queryValues.push(topic);
+    queryStrFilter += `WHERE topic = $1`;
+  }
+
+  if (sortBy) {
+    if (acceptedSorts.includes(sortBy) && acceptedOrders.includes(order)) {
+      queryStrSortBy += `ORDER BY ${sortBy} ${order}`;
+      console.log(queryStrSortBy, queryValues);
+    }
+  } else {
+    queryStrSortBy += `ORDER BY created_at DESC`;
+    console.log(queryStrSortBy, queryValues);
+  }
+
   return db
     .query(
       `
-       SELECT articles.author,title,articles.article_id,articles.created_at,articles.votes,article_img_url, cast(COUNT(comment_id) AS INT) AS comment_count
-       FROM articles
-       LEFT JOIN comments ON comments.article_id = articles.article_id
-       GROUP BY articles.article_id       
-       ORDER BY created_at DESC
-       `
+      SELECT articles.author,topic, title,articles.article_id,articles.created_at,articles.votes,article_img_url, cast(COUNT(comment_id) AS INT) AS comment_count
+      FROM articles
+      LEFT JOIN comments ON comments.article_id = articles.article_id
+      ${queryStrFilter}
+      GROUP BY articles.article_id       
+      ${queryStrSortBy};
+      `,
+      queryValues
     )
     .then(({ rows }) => {
+      console.log(rows);
+
+      if (!rows.length) {
+        return Promise.reject({
+          status: 404,
+          msg: "No articles found. Please try again",
+        });
+      }
+
       return rows;
     });
 };
@@ -117,7 +150,6 @@ const incrementVotesByArticle = (votesObj, article_id) => {
     });
 };
 
-
 const fetchUsers = () => {
   return db
     .query(
@@ -139,13 +171,12 @@ const fetchUsers = () => {
     });
 };
 
-
 module.exports = {
   fetchTopics,
   fetchSortedArticles,
   fetchArticleById,
   fetchCommentsByArticle,
   postAndReturnComment,
-    incrementVotesByArticle,
-fetchUsers
+  incrementVotesByArticle,
+  fetchUsers,
 };
